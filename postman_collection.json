@@ -1,0 +1,59 @@
+{
+  "info": {
+    "_postman_id": "503b40d0-44ed-44ac-a768-ede0d8738f52",
+    "name": "postman_collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53664213",
+    "_collection_link": "https://go.postman.co/collection/53664213-503b40d0-44ed-44ac-a768-ede0d8738f52?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get all texts",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Create text",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Get random text",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Update text",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Delete text",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Leaderboard",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
