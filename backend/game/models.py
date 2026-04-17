@@ -13,7 +13,7 @@ class Category(models.Model):
 
 class TextSnippet(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField
+    content = models.TextField(default=None)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,
                                  related_name='snippets') #FK 1
 
