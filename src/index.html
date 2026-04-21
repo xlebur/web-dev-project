@@ -8,6 +8,82 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <div id="app">
+      <div class="header">
+        <div class="logo">Type<span>Racer</span></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="mode-pills">
+            <div class="pill active" onclick="setMode(30)" id="m30">30s</div>
+            <div class="pill" onclick="setMode(60)" id="m60">60s</div>
+            <div class="pill" onclick="setMode(0)" id="mInf">&#x221e;</div>
+          </div>
+          <div class="badge" id="statusBadge">ready</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">WPM</div>
+          <div class="stat-value highlight" id="wpmVal">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Accuracy</div>
+          <div class="stat-value" id="accVal">100%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Words</div>
+          <div class="stat-value" id="wordsVal">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" id="timerLabel">Time</div>
+          <div class="stat-value timer-glow" id="timerVal">—</div>
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+
+      <div class="text-display" id="textDisplay"></div>
+
+      <input class="input-area" id="typingInput" placeholder="Click here and start typing..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="startRace()" id="startBtn">Start Race</button>
+        <button class="btn" onclick="resetRace()">Reset</button>
+        <button class="btn" onclick="newText()">New Text</button>
+      </div>
+
+      <div style="height:1rem"></div>
+
+      <div class="result-panel" id="resultPanel">
+        <div class="result-label">Race complete!</div>
+        <div class="result-wpm" id="resultWpm">0</div>
+        <div style="font-size:13px;color:var(--color-text-secondary);margin-top:4px;">words per minute</div>
+        <div class="result-row">
+          <div class="result-item">
+            <div class="result-item-val" id="resultAcc">—</div>
+            <div class="result-item-lbl">Accuracy</div>
+          </div>
+          <div class="result-item">
+            <div class="result-item-val" id="resultErrors">—</div>
+            <div class="result-item-lbl">Errors</div>
+          </div>
+          <div class="result-item">
+            <div class="result-item-val" id="resultTime">—</div>
+            <div class="result-item-lbl">Time</div>
+          </div>
+        </div>
+        <div class="leaderboard">
+          <div class="lb-title">Leaderboard</div>
+          <div id="lbList"></div>
+        </div>
+        <div style="margin-top:1rem;">
+          <button class="btn btn-primary" onclick="resetRace()">Race Again</button>
+        </div>
+      </div>
+    </div>
+  </app-root>
 </body>
 </html>

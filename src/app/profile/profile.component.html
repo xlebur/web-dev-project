@@ -1,0 +1,69 @@
+<div class="profile-container">
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="avatar-big">{{ user?.avatar }}</div>
+    <div class="profile-info">
+      <div class="profile-username">{{ user?.username }}</div>
+      <div class="profile-meta">
+        <span *ngIf="!user?.isGuest">{{ user?.email }}</span>
+        <span *ngIf="user?.isGuest" class="guest-badge">Guest Account</span>
+        <span class="join-date">Joined {{ user?.joinDate }}</span>
+      </div>
+      <div class="guest-warning" *ngIf="user?.isGuest">
+        ⚠️ Guest data is lost when you sign out. Register to save your progress.
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Sign out</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card highlight">
+      <div class="stat-val">{{ bestWpm }}</div>
+      <div class="stat-lbl">Best WPM</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">{{ avgWpm }}</div>
+      <div class="stat-lbl">Average WPM</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">{{ totalRaces }}</div>
+      <div class="stat-lbl">Total Races</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">
+        {{ recentRaces.length > 0 ? recentRaces[0].accuracy + '%' : '—' }}
+      </div>
+      <div class="stat-lbl">Last Accuracy</div>
+    </div>
+  </div>
+
+  <!-- Recent Races -->
+  <div class="section" *ngIf="recentRaces.length > 0">
+    <div class="section-title">Recent Races</div>
+    <div class="races-list">
+      <div class="race-row" *ngFor="let race of recentRaces; let i = index">
+        <div class="race-num">#{{ i + 1 }}</div>
+        <div class="race-wpm-bar">
+          <div class="race-wpm-label">{{ race.wpm }} wpm</div>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="getWpmBarWidth(race.wpm)"></div>
+          </div>
+        </div>
+        <div class="race-acc" [style.color]="getAccColor(race.accuracy)">{{ race.accuracy }}%</div>
+        <div class="race-errors">{{ race.errors }} err</div>
+        <div class="race-time">{{ race.time }}s</div>
+        <div class="race-date">{{ race.date }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="recentRaces.length === 0">
+    <div class="empty-icon">🏁</div>
+    <div class="empty-title">No races yet</div>
+    <div class="empty-sub">Complete a race to see your history here</div>
+  </div>
+
+</div>

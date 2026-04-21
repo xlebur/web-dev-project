@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: #0f0f0f;
+  border-bottom: 1px solid #1e1e1e;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 1rem;
+}
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-logo span { color: #e24b4a; }
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-links a {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover { color: #fff; }
+.nav-links a.active { color: #e24b4a; }
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid #222;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.user-pill:hover { border-color: #444; }
+
+.user-avatar { font-size: 16px; }
+
+.user-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ccc;
+}
+
+.guest-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: #1a1a1a;
+  color: #555;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #2a2a2a;
+}
+
+.btn-logout {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #222;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-logout:hover { color: #e24b4a; border-color: #3a1515; }
+
+main {
+  min-height: 100vh;
+  background: #0f0f0f;
+}
+
+main.with-nav {
+  min-height: calc(100vh - 60px);
+}

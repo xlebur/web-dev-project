@@ -1,0 +1,57 @@
+<div class="home-container">
+
+  <div class="hero">
+    <div class="hero-badge">🏎️ Web Dev Project — Angular</div>
+    <h1 class="hero-title">Type<span>Racer</span></h1>
+    <p class="hero-sub">Test your typing speed. Beat your record. Climb the leaderboard.</p>
+
+    <div class="hero-actions">
+      <button class="btn-primary" (click)="startRace()">Start Race →</button>
+      <button class="btn-secondary" (click)="viewLeaderboard()">Leaderboard</button>
+    </div>
+  </div>
+
+  <div class="stats-section" *ngIf="totalRaces > 0">
+    <div class="stat-card">
+      <div class="stat-val">{{ bestWpm }}</div>
+      <div class="stat-lbl">Best WPM</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">{{ totalRaces }}</div>
+      <div class="stat-lbl">Races Played</div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">⌨️</div>
+      <div class="feature-title">Real-time Typing</div>
+      <div class="feature-desc">Instant character-by-character feedback as you type</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">WPM Tracking</div>
+      <div class="feature-desc">Live words-per-minute calculated continuously</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">Accuracy Score</div>
+      <div class="feature-desc">Precision tracking with error highlighting</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">Leaderboard</div>
+      <div class="feature-desc">Save your scores and track improvement over time</div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <div class="team-title">Team Members</div>
+    <div class="team-list">
+      <div class="team-member">Omar Urazakov <span>24B032086</span></div>
+      <div class="team-member">Bekbolat Nurislam <span>24B031002</span></div>
+      <div class="team-member">Zholdassali Amir <span>24B031787</span></div>
+    </div>
+  </div>
+
+</div>

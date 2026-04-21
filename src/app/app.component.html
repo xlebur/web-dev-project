@@ -1,0 +1,21 @@
+<nav class="navbar" *ngIf="auth.isLoggedIn()">
+  <a class="nav-logo" routerLink="/">Type<span>Racer</span></a>
+  <div class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+    <a routerLink="/game" routerLinkActive="active">Race</a>
+    <a routerLink="/multiplayer" routerLinkActive="active">Multiplayer</a>
+    <a routerLink="/leaderboard" routerLinkActive="active">Leaderboard</a>
+  </div>
+  <div class="nav-user">
+    <a routerLink="/profile" class="user-pill">
+      <span class="user-avatar">{{ auth.currentUser()?.avatar }}</span>
+      <span class="user-name">{{ auth.currentUser()?.username }}</span>
+      <span class="guest-tag" *ngIf="auth.currentUser()?.isGuest">guest</span>
+    </a>
+    <button class="btn-logout" (click)="auth.logout()">Sign out</button>
+  </div>
+</nav>
+
+<main [class.with-nav]="auth.isLoggedIn()">
+  <router-outlet />
+</main>

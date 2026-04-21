@@ -1,0 +1,107 @@
+<div class="game-container">
+
+  <!-- Header -->
+  <div class="game-header">
+    <div class="mode-pills">
+      <button class="pill" [class.active]="raceMode === 30" (click)="setMode(30)">30s</button>
+      <button class="pill" [class.active]="raceMode === 60" (click)="setMode(60)">60s</button>
+      <button class="pill" [class.active]="raceMode === 0" (click)="setMode(0)">∞</button>
+    </div>
+    <div class="status-badge" [class.racing]="status === 'racing'" [class.done]="status === 'finished'">
+      {{ status === 'countdown' ? 'get ready' : status }}
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">WPM</div>
+      <div class="stat-value red">{{ wpm }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Accuracy</div>
+      <div class="stat-value">{{ accuracy }}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Words</div>
+      <div class="stat-value">{{ wordCount }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">{{ raceMode > 0 ? 'Time Left' : 'Elapsed' }}</div>
+      <div class="stat-value" [class.urgent]="timerUrgent">{{ timerDisplay }}</div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-wrap">
+    <div class="progress-fill" [style.width.%]="progress"></div>
+  </div>
+
+  <!-- Countdown Overlay -->
+  <div class="countdown-overlay" *ngIf="status === 'countdown'">
+    <div class="countdown-num">{{ countdown }}</div>
+  </div>
+
+  <!-- Text Display -->
+  <div class="text-display" *ngIf="status !== 'finished'">
+    <ng-container *ngFor="let c of chars">
+      <span
+        [class.correct]="c.status === 'correct'"
+        [class.wrong]="c.status === 'wrong'"
+        [class.cursor]="c.status === 'cursor'"
+        [class.pending]="c.status === 'pending'">{{ c.char }}</span>
+    </ng-container>
+  </div>
+
+  <!-- Input -->
+  <input
+    *ngIf="status !== 'finished'"
+    #typingInput
+    class="typing-input"
+    type="text"
+    [value]="typedValue"
+    placeholder="Click here and start typing..."
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+    [disabled]="status === 'countdown'"
+    (input)="onInput($event)"
+    (keydown)="onKeydown($event)"
+  />
+
+  <!-- Buttons -->
+  <div class="btn-row" *ngIf="status !== 'finished'">
+    <button class="btn btn-primary" (click)="startRace()" [disabled]="status !== 'idle'">Start Race</button>
+    <button class="btn" (click)="reset()">Reset</button>
+    <button class="btn" (click)="newText()">New Text</button>
+  </div>
+
+  <!-- Results Panel -->
+  <div class="result-panel" *ngIf="status === 'finished'">
+    <div class="result-label">Race Complete!</div>
+    <div class="result-wpm">{{ wpm }}</div>
+    <div class="result-wpm-label">words per minute</div>
+
+    <div class="result-row">
+      <div class="result-item">
+        <div class="result-val">{{ accuracy }}%</div>
+        <div class="result-lbl">Accuracy</div>
+      </div>
+      <div class="result-item">
+        <div class="result-val">{{ errorCount }}</div>
+        <div class="result-lbl">Errors</div>
+      </div>
+      <div class="result-item">
+        <div class="result-val">{{ wordCount }}</div>
+        <div class="result-lbl">Words</div>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" (click)="reset(); newText()">Race Again</button>
+      <button class="btn" (click)="goLeaderboard()">View Leaderboard</button>
+    </div>
+  </div>
+
+</div>

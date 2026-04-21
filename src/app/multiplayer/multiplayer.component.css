@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+.mp-container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: 'Syne', sans-serif;
+  color: #fff;
+}
+
+.mp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.mp-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.status-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 99px;
+  border: 1px solid #222;
+  color: #555;
+  background: #111;
+  text-transform: lowercase;
+}
+
+.status-badge.racing { color: #e24b4a; border-color: #3a1515; }
+.status-badge.done { color: #639922; border-color: #1e2e0d; }
+
+.track-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 1.5rem;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.racer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.racer-row.user-row .track { border-color: #3a1515; }
+.racer-row.user-row .track-fill { background: #e24b4a; }
+
+.racer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.racer-avatar { font-size: 20px; }
+
+.racer-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+
+.racer-wpm {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #555;
+  margin-left: auto;
+}
+
+.finish-badge { font-size: 16px; margin-left: auto; }
+
+.track {
+  flex: 1;
+  height: 20px;
+  background: #1a1a1a;
+  border-radius: 99px;
+  border: 1px solid #222;
+  position: relative;
+  overflow: visible;
+}
+
+.track-fill {
+  height: 100%;
+  background: #333;
+  border-radius: 99px;
+  transition: width 0.15s ease;
+}
+
+.car-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.15s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.car { font-size: 18px; display: block; }
+
+.pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #444;
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.countdown-box {
+  text-align: center;
+  padding: 1.5rem;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.countdown-num {
+  font-size: 56px;
+  font-weight: 800;
+  color: #e24b4a;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+}
+
+.countdown-label {
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.text-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  line-height: 1.9;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  user-select: none;
+  word-break: break-word;
+}
+
+.text-display span.correct { color: #639922; }
+.text-display span.wrong { color: #e24b4a; background: rgba(226,75,74,0.12); border-radius: 2px; }
+.text-display span.cursor { border-left: 2px solid #e24b4a; color: #888; animation: blink 0.7s steps(1) infinite; }
+.text-display span.pending { color: #444; }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.typing-input {
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #2a2a2a;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  margin-bottom: 1rem;
+}
+
+.typing-input:focus { border-color: #e24b4a; }
+.typing-input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-row { display: flex; gap: 10px; }
+
+.btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn:hover { background: #1a1a1a; color: #fff; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn.btn-primary { background: #e24b4a; border-color: #e24b4a; color: #fff; }
+.btn.btn-primary:hover { background: #c73332; }
+
+.results-panel {
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.result-rank { font-size: 64px; line-height: 1; margin-bottom: 8px; }
+
+.result-rank-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #888;
+  margin-bottom: 2rem;
+}
+
+.result-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.result-val {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.result-lbl {
+  font-size: 11px;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}

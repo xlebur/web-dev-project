@@ -1,0 +1,95 @@
+<div class="mp-container">
+
+  <div class="mp-header">
+    <h1 class="mp-title">Multiplayer Race</h1>
+    <div class="status-badge" [class.racing]="status === 'racing'" [class.done]="status === 'finished'">
+      {{ status === 'countdown' ? 'starting in ' + countdown + '...' : status }}
+    </div>
+  </div>
+
+  <!-- Racers Track -->
+  <div class="track-section">
+    <div class="racer-row" *ngFor="let racer of racers; let i = index" [class.user-row]="racer.isUser">
+      <div class="racer-info">
+        <span class="racer-avatar">{{ racer.avatar }}</span>
+        <span class="racer-name">{{ racer.name }}</span>
+        <span class="racer-wpm" *ngIf="status === 'racing' || status === 'finished'">
+          {{ racer.wpm }} wpm
+        </span>
+        <span class="finish-badge" *ngIf="racer.finished && status === 'finished'">
+          {{ i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🏁' }}
+        </span>
+      </div>
+      <div class="track">
+        <div class="car-wrap" [style.left.%]="racer.progress">
+          <span class="car">{{ racer.avatar }}</span>
+        </div>
+        <div class="track-fill" [style.width.%]="racer.progress"></div>
+      </div>
+      <div class="pct">{{ racer.progress }}%</div>
+    </div>
+  </div>
+
+  <!-- Countdown overlay -->
+  <div class="countdown-box" *ngIf="status === 'countdown'">
+    <div class="countdown-num">{{ countdown }}</div>
+    <div class="countdown-label">get ready!</div>
+  </div>
+
+  <!-- Typing area -->
+  <div *ngIf="status !== 'finished'">
+    <div class="text-display">
+      <ng-container *ngFor="let ch of currentText.split(''); let i = index">
+        <span
+          [class.correct]="i < typedValue.length && typedValue[i] === currentText[i]"
+          [class.wrong]="i < typedValue.length && typedValue[i] !== currentText[i]"
+          [class.cursor]="i === typedValue.length"
+          [class.pending]="i > typedValue.length">{{ ch }}</span>
+      </ng-container>
+    </div>
+
+    <input
+      #typingInput
+      class="typing-input"
+      type="text"
+      [value]="typedValue"
+      placeholder="Click here and start typing..."
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+      [disabled]="status === 'countdown'"
+      (input)="onInput($event)"
+      (keydown)="onKeydown()"
+    />
+
+    <div class="btn-row">
+      <button class="btn btn-primary" (click)="startRace()" [disabled]="status !== 'lobby'">
+        {{ status === 'lobby' ? 'Start Race' : 'Racing...' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results-panel" *ngIf="status === 'finished'">
+    <div class="result-rank">{{ getRankLabel(userRank) }}</div>
+    <div class="result-rank-label">
+      {{ userRank === 1 ? 'You won the race!' : 'You finished ' + userRank + (userRank === 2 ? 'nd' : userRank === 3 ? 'rd' : 'th') }}
+    </div>
+
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-val">{{ userWpm }}</div>
+        <div class="result-lbl">WPM</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-val">{{ accuracy }}%</div>
+        <div class="result-lbl">Accuracy</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-val">{{ errorCount }}</div>
+        <div class="result-lbl">Errors</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" (click)="playAgain()">Race Again</button>
+  </div>
+
+</div>
