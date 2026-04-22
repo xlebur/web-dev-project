@@ -28,34 +28,35 @@ export class AuthComponent {
     this.error = '';
   }
 
+  // Click event 1 — Register (triggers POST /api/auth/register)
   submit(): void {
     this.error = '';
     this.loading = true;
 
-    setTimeout(() => {
-      let result: { success: boolean; error?: string };
-
-      if (this.mode === 'register') {
-        if (!this.username.trim() || this.username.length < 3) {
-          this.error = 'Username must be at least 3 characters';
-          this.loading = false; return;
-        }
-        result = this.auth.register(this.username.trim(), this.email.trim(), this.password);
-      } else {
-        result = this.auth.login(this.email.trim(), this.password);
-      }
-
-      this.loading = false;
-      if (result.success) {
-        this.router.navigate(['/']);
-      } else {
-        this.error = result.error || 'Something went wrong';
-      }
-    }, 400);
+    if (this.mode === 'register') {
+      this.auth.register(this.username.trim(), this.email.trim(), this.password)
+        .subscribe({
+          next: () => this.router.navigate(['/']),
+          error: (err) => { this.error = err.message; this.loading = false; }
+        });
+    } else {
+      // Click event 2 — Login (triggers POST /api/auth/login)
+      this.auth.login(this.username.trim(), this.password).subscribe({
+        next: () => this.router.navigate(['/']),
+        error: (err) => {
+          this.error = err.message;
+          this.loading = false;
+        },
+      });
+    }
   }
 
+  // Click event 3 — Guest login (triggers POST /api/auth/guest)
   guestLogin(): void {
-    this.auth.loginAsGuest();
-    this.router.navigate(['/']);
+    this.loading = true;
+    this.auth.loginAsGuest().subscribe({
+      next: () => this.router.navigate(['/']),
+      error: (err) => { this.error = err.message; this.loading = false; }
+    });
   }
 }

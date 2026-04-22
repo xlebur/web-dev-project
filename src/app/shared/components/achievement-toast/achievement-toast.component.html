@@ -1,0 +1,15 @@
+<div class="toast-container">
+  <div
+    class="toast"
+    *ngFor="let toast of toasts; trackBy: trackById"
+    (click)="dismiss(toast.id)">
+    <div class="toast-icon">{{ toast.icon }}</div>
+    <div class="toast-body">
+      <div class="toast-label">Achievement Unlocked!</div>
+      <div class="toast-title">{{ toast.title }}</div>
+      <div class="toast-desc">{{ toast.description }}</div>
+    </div>
+    <button class="toast-close" (click)="dismiss(toast.id)">✕</button>
+    <div class="toast-progress"></div>
+  </div>
+</div>

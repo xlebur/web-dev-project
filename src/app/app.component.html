@@ -10,7 +10,7 @@
     <a routerLink="/profile" class="user-pill">
       <span class="user-avatar">{{ auth.currentUser()?.avatar }}</span>
       <span class="user-name">{{ auth.currentUser()?.username }}</span>
-      <span class="guest-tag" *ngIf="auth.currentUser()?.isGuest">guest</span>
+      <span class="guest-tag" *ngIf="auth.currentUser()?.is_guest">guest</span>
     </a>
     <button class="btn-logout" (click)="auth.logout()">Sign out</button>
   </div>
@@ -19,3 +19,6 @@
 <main [class.with-nav]="auth.isLoggedIn()">
   <router-outlet />
 </main>
+
+<!-- Global achievement toasts — shown on every page -->
+<app-achievement-toast />

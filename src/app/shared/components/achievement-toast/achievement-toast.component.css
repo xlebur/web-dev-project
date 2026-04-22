@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap');
+
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-left: 3px solid #e24b4a;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  min-width: 300px;
+  max-width: 360px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  pointer-events: all;
+  animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+.toast-body { flex: 1; }
+
+.toast-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #e24b4a;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+
+.toast-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.toast-desc {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  color: #666;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #444;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+  align-self: flex-start;
+  transition: color 0.15s;
+}
+
+.toast-close:hover { color: #fff; }
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #e24b4a;
+  width: 100%;
+  transform-origin: left;
+  animation: shrink 4s linear forwards;
+}
+
+@keyframes shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}

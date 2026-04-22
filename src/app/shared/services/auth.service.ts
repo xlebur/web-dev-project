@@ -1,120 +1,63 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string;
-  isGuest: boolean;
-  joinDate: string;
-  totalRaces: number;
-  bestWpm: number;
-  avgWpm: number;
-}
+import { Observable, tap } from 'rxjs';
+import { ApiService, User, AuthResponse } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly USERS_KEY = 'tr_users';
-  private readonly SESSION_KEY = 'tr_session';
+  private readonly TOKEN_KEY = 'tr_jwt_token';
+  private readonly USER_KEY = 'tr_user';
 
   currentUser = signal<User | null>(null);
 
-  constructor(private router: Router) {
-    const saved = localStorage.getItem(this.SESSION_KEY);
-    if (saved) this.currentUser.set(JSON.parse(saved));
+  constructor(
+    private api: ApiService,
+    private router: Router,
+  ) {
+    const savedUser = localStorage.getItem(this.USER_KEY);
+    if (savedUser && this.getToken()) {
+      this.currentUser.set(JSON.parse(savedUser));
+    }
   }
 
-  register(username: string, email: string, password: string): { success: boolean; error?: string } {
-    const users = this.getUsers();
-    if (users.find(u => u.email === email)) return { success: false, error: 'Email already registered' };
-    if (users.find(u => u.username === username)) return { success: false, error: 'Username already taken' };
-
-    const user: User = {
-      id: crypto.randomUUID(),
-      username,
-      email,
-      avatar: this.generateAvatar(username),
-      isGuest: false,
-      joinDate: new Date().toLocaleDateString(),
-      totalRaces: 0,
-      bestWpm: 0,
-      avgWpm: 0
-    };
-
-    const userRecord = { ...user, password: btoa(password) };
-    users.push(userRecord);
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-    this.setSession(user);
-    return { success: true };
+  register(username: string, email: string, password: string): Observable<AuthResponse> {
+    return this.api.register(username, email, password).pipe(tap((res) => this.setSession(res)));
   }
 
-  login(email: string, password: string): { success: boolean; error?: string } {
-    const users = this.getUsers();
-    const found = users.find(u => u.email === email && u.password === btoa(password));
-    if (!found) return { success: false, error: 'Invalid email or password' };
-
-    const { password: _, ...user } = found;
-    this.setSession(user as User);
-    return { success: true };
+  login(username: string, password: string): Observable<AuthResponse> {
+    // Передаем username в api.service
+    return this.api.login(username, password).pipe(tap((res) => this.setSession(res)));
   }
 
-  loginAsGuest(): void {
-    const guestNum = Math.floor(Math.random() * 9000) + 1000;
-    const user: User = {
-      id: crypto.randomUUID(),
-      username: `Guest${guestNum}`,
-      email: '',
-      avatar: '👤',
-      isGuest: true,
-      joinDate: new Date().toLocaleDateString(),
-      totalRaces: 0,
-      bestWpm: 0,
-      avgWpm: 0
-    };
-    this.setSession(user);
+  loginAsGuest(): Observable<AuthResponse> {
+    return this.api.loginAsGuest().pipe(tap((res) => this.setSession(res)));
   }
 
   logout(): void {
-    localStorage.removeItem(this.SESSION_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
     this.currentUser.set(null);
     this.router.navigate(['/auth']);
   }
 
-  updateStats(wpm: number, accuracy: number): void {
-    const user = this.currentUser();
-    if (!user) return;
-    user.totalRaces++;
-    if (wpm > user.bestWpm) user.bestWpm = wpm;
-    user.avgWpm = Math.round(((user.avgWpm * (user.totalRaces - 1)) + wpm) / user.totalRaces);
-    this.setSession(user);
-
-    if (!user.isGuest) {
-      const users = this.getUsers();
-      const idx = users.findIndex(u => u.id === user.id);
-      if (idx >= 0) {
-        users[idx] = { ...users[idx], ...user };
-        localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-      }
-    }
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   isLoggedIn(): boolean {
-    return this.currentUser() !== null;
+    return !!this.getToken() && this.currentUser() !== null;
   }
 
-  private setSession(user: User): void {
+  updateUserLocally(user: User): void {
     this.currentUser.set(user);
-    localStorage.setItem(this.SESSION_KEY, JSON.stringify(user));
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
-  private getUsers(): any[] {
-    const data = localStorage.getItem(this.USERS_KEY);
-    return data ? JSON.parse(data) : [];
-  }
+  private setSession(res: AuthResponse): void {
+    localStorage.setItem(this.TOKEN_KEY, res.access);
+    localStorage.setItem(this.USER_KEY, JSON.stringify(res.user));
+    this.currentUser.set(res.user);
 
-  private generateAvatar(name: string): string {
-    const avatars = ['🦊', '🐯', '🦁', '🐺', '🦅', '🐉', '🦄', '🐧', '🦋', '🐬'];
-    return avatars[name.charCodeAt(0) % avatars.length];
+    this.router.navigate(['/']);
   }
 }

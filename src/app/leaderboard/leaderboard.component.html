@@ -7,11 +7,24 @@
     </div>
     <div class="lb-actions">
       <button class="btn btn-primary" (click)="playAgain()">Play Again</button>
-      <button class="btn btn-danger" (click)="clearAll()" *ngIf="entries.length > 0">Clear All</button>
+      <button class="btn" (click)="loadLeaderboard()">Refresh</button>
     </div>
   </div>
 
-  <div class="table-wrap" *ngIf="entries.length > 0; else emptyState">
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <span>Loading leaderboard...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" *ngIf="error && !loading">
+    ⚠️ {{ error }}
+    <button class="btn-retry" (click)="loadLeaderboard()">Try again</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap" *ngIf="!loading && !error && entries.length > 0">
     <table class="lb-table">
       <thead>
         <tr>
@@ -31,26 +44,23 @@
             <span *ngIf="isTopThree(i)" class="rank-icon">{{ getRankIcon(i) }}</span>
             <span *ngIf="!isTopThree(i)" class="rank-num">{{ i + 1 }}</span>
           </td>
-          <td class="name-cell">
-            <span class="player-name">{{ entry.name }}</span>
-          </td>
+          <td class="name-cell">{{ entry.username }}</td>
           <td class="wpm-cell">{{ entry.wpm }}</td>
           <td>{{ entry.accuracy }}%</td>
           <td>{{ entry.errors }}</td>
-          <td>{{ entry.time }}s</td>
-          <td class="date-cell">{{ entry.date }}</td>
+          <td>{{ entry.duration }}s</td>
+          <td class="date-cell">{{ entry.created_at | date:'short' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <ng-template #emptyState>
-    <div class="empty-state">
-      <div class="empty-icon">🏁</div>
-      <div class="empty-title">No races yet</div>
-      <div class="empty-sub">Complete a race to appear on the leaderboard</div>
-      <button class="btn btn-primary" (click)="playAgain()">Start Your First Race</button>
-    </div>
-  </ng-template>
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading && !error && entries.length === 0">
+    <div class="empty-icon">🏁</div>
+    <div class="empty-title">No races yet</div>
+    <div class="empty-sub">Complete a race to appear on the leaderboard</div>
+    <button class="btn btn-primary" (click)="playAgain()">Start First Race</button>
+  </div>
 
 </div>

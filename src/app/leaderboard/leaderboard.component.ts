@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { LeaderboardService, LeaderboardEntry } from '../shared/services/leaderboard.service';
+import { ApiService, Race } from '../shared/services/api.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -10,32 +10,32 @@ import { LeaderboardService, LeaderboardEntry } from '../shared/services/leaderb
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.css']
 })
-export class LeaderboardComponent {
-  entries: LeaderboardEntry[] = [];
+export class LeaderboardComponent implements OnInit {
+  entries: Race[] = [];
+  loading = true;
+  error = '';
 
-  constructor(private lbService: LeaderboardService, private router: Router) {
-    this.entries = this.lbService.getGlobalEntries();
+  constructor(private api: ApiService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.loadLeaderboard();
   }
 
-  clearAll(): void {
-    if (confirm('Clear entire leaderboard?')) {
-      this.lbService.clearGlobal();
-      this.entries = [];
-    }
+  // Triggers GET /api/races/leaderboard
+  loadLeaderboard(): void {
+    this.loading = true;
+    this.error = '';
+    this.api.getLeaderboard().subscribe({
+      next: (res) => { this.entries = res.leaderboard; this.loading = false; },
+      error: (err) => { this.error = err.message; this.loading = false; }
+    });
   }
 
-  playAgain(): void {
-    this.router.navigate(['/game']);
+  playAgain(): void { this.router.navigate(['/game']); }
+
+  getRankIcon(i: number): string {
+    return i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : String(i + 1);
   }
 
-  getRankIcon(index: number): string {
-    if (index === 0) return '🥇';
-    if (index === 1) return '🥈';
-    if (index === 2) return '🥉';
-    return String(index + 1);
-  }
-
-  isTopThree(index: number): boolean {
-    return index < 3;
-  }
+  isTopThree(i: number): boolean { return i < 3; }
 }

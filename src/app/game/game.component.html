@@ -2,14 +2,31 @@
 
   <!-- Header -->
   <div class="game-header">
-    <div class="mode-pills">
-      <button class="pill" [class.active]="raceMode === 30" (click)="setMode(30)">30s</button>
-      <button class="pill" [class.active]="raceMode === 60" (click)="setMode(60)">60s</button>
-      <button class="pill" [class.active]="raceMode === 0" (click)="setMode(0)">∞</button>
+    <div class="left-controls">
+      <!-- Difficulty selector (fetches from Django API) -->
+      <div class="difficulty-pills">
+        <button class="diff-pill" [class.active]="selectedDifficulty === 'all'"    (click)="setDifficulty('all')">All</button>
+        <button class="diff-pill easy"   [class.active]="selectedDifficulty === 'easy'"   (click)="setDifficulty('easy')">Easy</button>
+        <button class="diff-pill medium" [class.active]="selectedDifficulty === 'medium'" (click)="setDifficulty('medium')">Medium</button>
+        <button class="diff-pill hard"   [class.active]="selectedDifficulty === 'hard'"   (click)="setDifficulty('hard')">Hard</button>
+      </div>
+      <!-- Time mode -->
+      <div class="mode-pills">
+        <button class="pill" [class.active]="raceMode === 30" (click)="setMode(30)">30s</button>
+        <button class="pill" [class.active]="raceMode === 60" (click)="setMode(60)">60s</button>
+        <button class="pill" [class.active]="raceMode === 0"  (click)="setMode(0)">∞</button>
+      </div>
     </div>
-    <div class="status-badge" [class.racing]="status === 'racing'" [class.done]="status === 'finished'">
-      {{ status === 'countdown' ? 'get ready' : status }}
+    <div class="status-badge"
+         [class.racing]="status === 'racing'"
+         [class.done]="status === 'finished'">
+      {{ status === 'countdown' ? 'starting in ' + countdown + '...' : status }}
     </div>
+  </div>
+
+  <!-- Loading texts indicator -->
+  <div class="loading-bar" *ngIf="loadingTexts">
+    <div class="loading-bar-fill"></div>
   </div>
 
   <!-- Stats Row -->
@@ -37,7 +54,13 @@
     <div class="progress-fill" [style.width.%]="progress"></div>
   </div>
 
-  <!-- Countdown Overlay -->
+  <!-- Live WPM Chart (shown during and after race) -->
+  <div class="chart-wrap" *ngIf="status === 'racing' || (status === 'finished' && wpmHistory.length > 1)">
+    <div class="chart-label">Live WPM</div>
+    <canvas #wpmCanvas width="740" height="80" class="wpm-canvas"></canvas>
+  </div>
+
+  <!-- Countdown -->
   <div class="countdown-overlay" *ngIf="status === 'countdown'">
     <div class="countdown-num">{{ countdown }}</div>
   </div>
@@ -61,10 +84,7 @@
     type="text"
     [value]="typedValue"
     placeholder="Click here and start typing..."
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    spellcheck="false"
+    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
     [disabled]="status === 'countdown'"
     (input)="onInput($event)"
     (keydown)="onKeydown($event)"
@@ -98,9 +118,15 @@
       </div>
     </div>
 
+    <div class="save-status" *ngIf="saving">
+      <div class="spinner-small"></div> Saving result...
+    </div>
+    <div class="save-error" *ngIf="saveError">⚠️ {{ saveError }}</div>
+    <div class="save-ok" *ngIf="!saving && !saveError">✓ Result saved</div>
+
     <div class="result-actions">
       <button class="btn btn-primary" (click)="reset(); newText()">Race Again</button>
-      <button class="btn" (click)="goLeaderboard()">View Leaderboard</button>
+      <button class="btn" (click)="goLeaderboard()">Leaderboard</button>
     </div>
   </div>
 

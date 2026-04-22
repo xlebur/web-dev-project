@@ -1,69 +1,143 @@
 <div class="profile-container">
 
-  <!-- Profile Header -->
-  <div class="profile-header">
-    <div class="avatar-big">{{ user?.avatar }}</div>
-    <div class="profile-info">
-      <div class="profile-username">{{ user?.username }}</div>
-      <div class="profile-meta">
-        <span *ngIf="!user?.isGuest">{{ user?.email }}</span>
-        <span *ngIf="user?.isGuest" class="guest-badge">Guest Account</span>
-        <span class="join-date">Joined {{ user?.joinDate }}</span>
-      </div>
-      <div class="guest-warning" *ngIf="user?.isGuest">
-        ⚠️ Guest data is lost when you sign out. Register to save your progress.
-      </div>
-    </div>
-    <button class="btn-logout" (click)="logout()">Sign out</button>
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div><span>Loading profile...</span>
   </div>
 
-  <!-- Stats Grid -->
-  <div class="stats-grid">
-    <div class="stat-card highlight">
-      <div class="stat-val">{{ bestWpm }}</div>
-      <div class="stat-lbl">Best WPM</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">{{ avgWpm }}</div>
-      <div class="stat-lbl">Average WPM</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">{{ totalRaces }}</div>
-      <div class="stat-lbl">Total Races</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">
-        {{ recentRaces.length > 0 ? recentRaces[0].accuracy + '%' : '—' }}
-      </div>
-      <div class="stat-lbl">Last Accuracy</div>
-    </div>
+  <div class="error-msg" *ngIf="error && !loading">
+    ⚠️ {{ error }}
+    <button class="btn-retry" (click)="loadProfile()">Try again</button>
   </div>
 
-  <!-- Recent Races -->
-  <div class="section" *ngIf="recentRaces.length > 0">
-    <div class="section-title">Recent Races</div>
-    <div class="races-list">
-      <div class="race-row" *ngFor="let race of recentRaces; let i = index">
-        <div class="race-num">#{{ i + 1 }}</div>
-        <div class="race-wpm-bar">
-          <div class="race-wpm-label">{{ race.wpm }} wpm</div>
-          <div class="bar-track">
-            <div class="bar-fill" [style.width.%]="getWpmBarWidth(race.wpm)"></div>
+  <ng-container *ngIf="!loading && !error">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+
+      <!-- Avatar with picker -->
+      <div class="avatar-wrap">
+        <div class="avatar-big" (click)="toggleAvatarPicker()" title="Click to change avatar">
+          {{ user?.avatar }}
+          <div class="avatar-edit-hint">✎</div>
+        </div>
+
+        <!-- Avatar picker dropdown -->
+        <div class="avatar-picker" *ngIf="showAvatarPicker">
+          <div class="picker-label">Choose your avatar</div>
+          <div class="picker-grid">
+            <button
+              *ngFor="let a of AVATARS"
+              class="picker-item"
+              [class.current]="a === user?.avatar"
+              (click)="selectAvatar(a)"
+              [disabled]="savingAvatar">
+              {{ a }}
+            </button>
           </div>
         </div>
-        <div class="race-acc" [style.color]="getAccColor(race.accuracy)">{{ race.accuracy }}%</div>
-        <div class="race-errors">{{ race.errors }} err</div>
-        <div class="race-time">{{ race.time }}s</div>
-        <div class="race-date">{{ race.date }}</div>
+      </div>
+
+      <div class="profile-info">
+        <div class="profile-username">{{ user?.username }}</div>
+        <div class="profile-meta">
+          <span *ngIf="!user?.is_guest">{{ user?.email }}</span>
+          <span *ngIf="user?.is_guest" class="guest-badge">Guest Account</span>
+          <span class="join-date">Joined {{ user?.join_date }}</span>
+        </div>
+        <div class="achievements-mini">
+          <span class="achievement-count">{{ earnedCount }}</span> / {{ achievements.length }} achievements
+        </div>
+        <div class="guest-warning" *ngIf="user?.is_guest">
+          ⚠️ Guest data is lost when you sign out. Register to save progress.
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">Sign out</button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card highlight">
+        <div class="stat-val">{{ bestWpm }}</div>
+        <div class="stat-lbl">Best WPM</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">{{ avgWpm }}</div>
+        <div class="stat-lbl">Average WPM</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">{{ totalRaces }}</div>
+        <div class="stat-lbl">Total Races</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">{{ recentRaces.length > 0 ? recentRaces[0].accuracy + '%' : '—' }}</div>
+        <div class="stat-lbl">Last Accuracy</div>
       </div>
     </div>
-  </div>
 
-  <!-- Empty state -->
-  <div class="empty-state" *ngIf="recentRaces.length === 0">
-    <div class="empty-icon">🏁</div>
-    <div class="empty-title">No races yet</div>
-    <div class="empty-sub">Complete a race to see your history here</div>
-  </div>
+    <!-- WPM Progress Line Chart -->
+    <div class="section" *ngIf="recentRaces.length >= 2">
+      <div class="section-title">WPM Progress — Last 10 Races</div>
+      <div class="chart-card">
+        <canvas #lineCanvas width="740" height="140"></canvas>
+      </div>
+    </div>
 
+    <!-- Race History Bar Chart -->
+    <div class="section" *ngIf="recentRaces.length >= 2">
+      <div class="section-title">Race History — Last 20 Races</div>
+      <div class="chart-card">
+        <canvas #barCanvas width="740" height="120"></canvas>
+        <div class="chart-legend">
+          <span class="legend-item green">● High (80%+)</span>
+          <span class="legend-item red">● Medium (50–80%)</span>
+          <span class="legend-item amber">● Low (&lt;50%)</span>
+          <span class="legend-item muted">— Average</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements Grid -->
+    <div class="section">
+      <div class="section-title">Achievements ({{ earnedCount }}/{{ achievements.length }})</div>
+      <div class="achievements-grid">
+        <div
+          class="achievement-card"
+          *ngFor="let a of achievements"
+          [class.earned]="a.earned"
+          [class.locked]="!a.earned">
+          <div class="achievement-icon">{{ a.earned ? a.icon : '🔒' }}</div>
+          <div class="achievement-title">{{ a.title }}</div>
+          <div class="achievement-desc">{{ a.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Races Table -->
+    <div class="section" *ngIf="recentRaces.length > 0">
+      <div class="section-title">Recent Races</div>
+      <div class="races-list">
+        <div class="race-row" *ngFor="let race of recentRaces.slice(0,10); let i = index">
+          <div class="race-num">#{{ i + 1 }}</div>
+          <div class="race-wpm-bar">
+            <div class="race-wpm-label">{{ race.wpm }} wpm</div>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="bestWpm > 0 ? (race.wpm / bestWpm) * 100 : 0"></div>
+            </div>
+          </div>
+          <div class="race-acc" [style.color]="getAccColor(race.accuracy)">{{ race.accuracy }}%</div>
+          <div class="race-errors">{{ race.errors }} err</div>
+          <div class="race-time">{{ race.duration }}s</div>
+          <div class="race-mode mode-badge">{{ race.mode }}</div>
+          <div class="race-date">{{ race.created_at | date:'MMM d' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="recentRaces.length === 0">
+      <div class="empty-icon">🏁</div>
+      <div class="empty-title">No races yet</div>
+      <div class="empty-sub">Complete a race to see your history here</div>
+    </div>
+
+  </ng-container>
 </div>
